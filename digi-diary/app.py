@@ -1,11 +1,14 @@
 from flask import Flask, render_template, request, jsonify
 from model_prediction import *
-
+from dotenv import load_dotenv
+import os
 app = Flask(__name__)
 
 text=""
 predicted_emotion=""
 predicted_emotion_img_url=""
+
+load_dotenv()
 
 @app.route("/")
 def home():
@@ -34,17 +37,17 @@ def predict_emotion():
 @app.route("/save-entry", methods=["POST"])
 
 def save_entry():
-
+    data_entry_path = os.getenv("PATH_TO_DATA_ENTRY")
     date = request.json.get("date")
     emotion = request.json.get("emotion")
     save_text = request.json.get("text")
-
+    emotion_url = request.json.get("emotion_url")
     save_text = save_text.replace("\n", "")
 
-    entry = f'"{date}", "{save_text}", "{emotion}"\n'
+    entry = f'"{date}","{save_text}","{emotion}","{emotion_url}"\n'
 
 
-    with open("D:/Kunal Programming/PYTHON/NLP-Python/PRO-C118-Student-Boilerplate-Code/static/assets/data_files/data_entry.csv") as f:
+    with open(data_entry_path, 'a') as f:
         f.write(entry)
     return jsonify("Success")
 
